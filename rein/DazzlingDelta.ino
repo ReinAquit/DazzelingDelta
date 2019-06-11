@@ -29,7 +29,11 @@
 #define MOT_SLEEP 7
 #define MOT_RESET 8
 
-stepper_cal(byte stepper_mot);
+#define delay_step 10 //Delay between high and low
+#define delay_pulse 10
+
+void stepper_cal(byte stepper_mot); //a,b or c
+void stepper_mov_steps(int stepper,int steps);
 
 void setup() 
 {
@@ -50,20 +54,21 @@ void setup()
     pinMode(MOT_SLEEP, OUTPUT);
     pinMode(MOT_RESET, OUTPUT);
 
-    stepper_cal(a);
-    stepper_cal(a);
-    stepper_cal(a);
-}
+    digitalWrite
 
+    stepper_cal(a);
+    stepper_cal(b);
+    stepper_cal(c);
+
+}
 
 void loop() 
 {
 
 
-
 }
 
-int stepper_cal(char stepper_mot)
+void stepper_cal(char stepper_mot)
 {
 
     int stepper = 0;
@@ -73,18 +78,20 @@ int stepper_cal(char stepper_mot)
     {
     case 97:
     case 65:
-        stepper = DIR_MOT_A;
+        stepper = STEP_MOT_A;
+        dir_step = DIR_MOT_A;
         stopper = END_STOP_A;
-        stop
         break;
     case 98:
     case 66:
-        stepper = DIR_MOT_B;
+        stepper = STEP_MOT_B;
+        dir_step = DIR_MOT_B;
         stopper = END_STOP_B;
         break;
     case 99:
     case 67:
-        stepper = DIR_MOT_C;
+        stepper = STEP_MOT_C;
+        dir_step = DIR_MOT_C;
         stopper = END_STOP_C;
         break;
     default:
@@ -92,9 +99,25 @@ int stepper_cal(char stepper_mot)
         break;
     }
 
-    digitalWrite(servo, LOW);
+    digitalWrite(, LOW);
 
-    while(analogRead())
+    while(analogRead(stopper) > 50)
+    {
+        digitalWrite(stepper, HIGH);
+        delay(delay_step);
+        digitalWrite(stepper, LOW);
+        delay(delay_pulse);
+    }
 
+}
 
+void stepper_mov_steps(int stepper,int steps)
+{
+    for(i = steps, i == 0, i--)
+    {
+        digitalWrite(stepper, HIGH);
+        delay(delay_step);
+        digitalWrite(stepper, LOW);
+        delay(delay_pulse);
+    }
 }
