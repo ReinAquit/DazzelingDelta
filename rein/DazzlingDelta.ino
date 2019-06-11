@@ -4,7 +4,7 @@
 // Version  : 1.0
 // Autor    : Rein Lenting
 // CPU      : ATmega328
-// IDE      : Visual Ctudio Code
+// IDE      : Visual Studio Code
 // Module   : Arduino Nano
 // Function : Stepper driver control (DRV8825)
 //--------------------------------------------------------------
@@ -29,9 +29,10 @@
 #define MOT_SLEEP 7
 #define MOT_RESET 8
 
-#define delay_step 10 //Delay between high and low
-#define delay_pulse 10
+#define delay_step 10 
+#define delay_pulse 10//Delay between high and low
 
+//Prototype's
 void stepper_cal(byte stepper_mot); //a,b or c
 void stepper_mov_steps(int stepper,int steps);
 
@@ -54,7 +55,7 @@ void setup()
     pinMode(MOT_SLEEP, OUTPUT);
     pinMode(MOT_RESET, OUTPUT);
 
-    digitalWrite
+    digitalWrite(MOT_SLEEP, HIGH);
 
     stepper_cal(a);
     stepper_cal(b);
@@ -65,6 +66,7 @@ void setup()
 void loop() 
 {
 
+    stepper_mov_steps(STEP_MOT_A,50);
 
 }
 
@@ -99,7 +101,7 @@ void stepper_cal(char stepper_mot)
         break;
     }
 
-    digitalWrite(, LOW);
+    digitalWrite(dir_step, LOW);
 
     while(analogRead(stopper) > 50)
     {
@@ -116,8 +118,8 @@ void stepper_mov_steps(int stepper,int steps)
     for(i = steps, i == 0, i--)
     {
         digitalWrite(stepper, HIGH);
-        delay(delay_step);
-        digitalWrite(stepper, LOW);
         delay(delay_pulse);
+        digitalWrite(stepper, LOW);
+        delay(delay_step);
     }
 }
