@@ -8,20 +8,6 @@ int value_user_input(void);
 
 int incomingByte = 0;   // for incoming serial data
 
-void setup()
-{
-  Serial.begin(9600);
-
-
-}
-
-void loop()
-{
-
-  interface();
-
-}
-
 void interface(void)
 {
   int i = 1;
@@ -48,7 +34,8 @@ void interface(void)
 
     input = u_input();
 
-    switch (input) {
+    switch (input) 
+    {
       case 49:
         Serial.print("Enter a value for cor X\n");
         cX = value_user_input();
@@ -61,8 +48,14 @@ void interface(void)
         Serial.print("Enter a value for cor Z\n");
         cZ = value_user_input();
         break;
+      case 52:
+        Serial.print("Setting servo's\n");
+        Hoeken(cX, cY, cZ);
+        Serial.print("servo's set\n");
+        break;
+       default:
+        Serial.print("Bad input");
     }
-    delay(100);
   }
 }
 
