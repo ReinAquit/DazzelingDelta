@@ -86,8 +86,8 @@ float BerekenLengte3 (int A, int B, int C)
 /*Deze functie veranderd de doelposities naar de invoer in de functie en laat de
   servomotoren aansturen zodra er een benaderde hoek is gevonden*/
 float Hoeken (int X, int Y, int Z) {
-  PdoelX = 10;
-  PdoelY = 70;
+  PdoelX = X;
+  PdoelY = Y;
   PdoelZ = Z;
   Servo1.write(BerekenHoek1());
   Servo2.write(BerekenHoek2());

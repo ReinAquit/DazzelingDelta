@@ -6,28 +6,29 @@
 #include <Servo.h>
 
 //standaardposities en afmetingen delta//
-#define Pservo1X -40
-#define Pservo1Y 0
+#define Pservo1X 0
+#define Pservo1Y 40
 #define Pservo1Z 0
 
-#define Pservo2X -50
-#define Pservo2Y 17
+#define Pservo2X 0
+#define Pservo2Y 90
 #define Pservo2Z 0
 
-#define Pservo3X -80
-#define Pservo3Y - 87
+#define Pservo3X 0
+#define Pservo3Y 20
 #define Pservo3Z 0
 
 #define nulpuntX 0
 #define nulpuntY 0
 #define nulpuntZ 0
 
-#define Lbase 100
-#define Larm1 50
-#define Larm2 185
+#define Lbase 102
+#define Larm1 55
+#define Larm2 220
 #define Ltop 40
 #define Larmmax 190
 #define Larmmin 180
+
 
 //variabelen voor berekening van gewrichtlocaties//
 float Hoek1;
@@ -89,7 +90,10 @@ void setup()
   Servo1.attach(9);
   Servo2.attach(10);
   Servo3.attach(11);
+
   
+  Hoeken(70, 70, 140);
+
 }
 
 void loop()

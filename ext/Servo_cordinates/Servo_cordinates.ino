@@ -1,46 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-Servo Servo1;
-Servo Servo2;
-Servo Servo3;
-
-void interface(void);
-char u_input(void);
-int value_user_input(void);
-
-int incomingByte = 0;   // for incoming serial data
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <Servo.h>
 
 //standaardposities en afmetingen delta//
-#define Pservo1X 0
-#define Pservo1Y 40
+#define Pservo1X 100
+#define Pservo1Y 0
 #define Pservo1Z 0
 
-#define Pservo2X 0
-#define Pservo2Y 90
+#define Pservo2X -50
+#define Pservo2Y 87
 #define Pservo2Z 0
 
-#define Pservo3X 0
-#define Pservo3Y 20
+#define Pservo3X -50
+#define Pservo3Y - 87
 #define Pservo3Z 0
 
 #define nulpuntX 0
 #define nulpuntY 0
 #define nulpuntZ 0
 
-#define Lbase 102
-#define Larm1 55
-#define Larm2 220
+#define Lbase 100
+#define Larm1 50
+#define Larm2 185
 #define Ltop 40
 #define Larmmax 190
 #define Larmmin 180
-
 
 //variabelen voor berekening van gewrichtlocaties//
 float Hoek1;
@@ -94,6 +79,14 @@ Servo Servo1;
 Servo Servo2;
 Servo Servo3;
 
+//variabelen voor interface//
+void interface(void);
+char u_input(void);
+int value_user_input(void);
+
+int incomingByte = 0;   // for incoming serial data
+
+
 void setup()
 {
   
@@ -102,14 +95,14 @@ void setup()
   Servo1.attach(9);
   Servo2.attach(10);
   Servo3.attach(11);
-
   
-  Hoeken(70, 70, 140);
-
 }
 
 void loop()
 {
+  Hoeken(0,70,140);
+  delay(1);
+  
   interface();
 }
 
@@ -151,13 +144,12 @@ void interface(void)
         break;
       case 51:
         Serial.print("Enter a value for cor Z\n");
+        Serial.print("Prefferd between (100-140)\n");
         cZ = value_user_input();
         break;
       case 52:
         Serial.print("Setting servo's\n");
-          Servo1.write(cX);
-          Servo2.write(cY);
-          Servo3.write(cZ);
+          Hoeken(cX,cY,cZ);
         Serial.print("servo's set\n");
         break;
        default:
@@ -175,6 +167,7 @@ char u_input(void)
   while (i_buffer == 255)
   {
     i_buffer = Serial.read();
+    delay(10);
   }
   return (i_buffer);
 }
@@ -192,50 +185,49 @@ int value_user_input(void)
     {
       inChar = Serial.readBytesUntil('\n', inString, 10);
       inString[inChar] = '\0';
+      delay(10);
       return(atoi(inString));
     }
   }
 }
 
-
-//functies voor het veranderen van de servopositie in de berekening//
 float BerekenHoek1()
 {
   Larm2s1 = BerekenLengte1(PdoelX, PdoelY, PdoelZ);
   if ((Larm2s1 > 182) && (Larm2s1 < 188)) {
-    Hoek1 = 115 - pos1 * 180 / PI;
-    return (Hoek1);
-    pos1 = -1.1345;
+   Hoek1 = 115-pos1*180/PI;
+   return(Hoek1);
+   pos1 = -1.1345;
   }
   else {
-    pos1 = pos1 + 0.017453;
+   pos1 = pos1 + 0.017453;
   }
 }
 
-float BerekenHoek2()
+float BerekenHoek2() 
 {
   Larm2s2 = BerekenLengte2(PdoelX, PdoelY, PdoelZ);
   if (Larm2s2 > 182 && Larm2s2 < 188) {
-    Hoek2 = 115 - pos2 * 180 / PI;
-    pos2 = -1.1345;
-    return (Hoek2);
+   Hoek2 = 115-pos2*180/PI;
+   pos2 = -1.1345;
+   return(Hoek2);
   }
   else {
     pos2 = pos2 + 0.017453;
   }
 }
-
+  
 float BerekenHoek3()
 {
   Larm2s3 = BerekenLengte3(PdoelX, PdoelY, PdoelZ);
-  if ((Larm2s3 > 182) && (Larm2s3 < 188)) {
-    Hoek3 = 115 - pos3 * 180 / PI;
-    //Servo3.write(Hoek3);
-    return (Hoek3);
-    pos3 = -1.1345;
+  if ((Larm2s3 > 182) && (Larm2s3 < 188)){
+   Hoek3 = 115-pos3*180/PI;
+   //Servo3.write(Hoek3);
+   return(Hoek3);
+   pos3 = -1.1345;
   }
   else {
-    pos3 = pos3 + 0.017453;
+   pos3 = pos3 + 0.017453;
   }
 }
 
@@ -245,46 +237,46 @@ float BerekenLengte1 (int A, int B, int C)
   Ppols1X = A + Ltop;
   Ppols1Y = B;
   Ppols1Z = C;
-
-  Pelleboog1X = Pservo1X + Larm1 * cos(pos1);
+  
+  Pelleboog1X = Pservo1X + Larm1*cos(pos1);
   Pelleboog1Y = Pservo1Y;
-  Pelleboog1Z = Pservo1Z + Larm1 * sin(pos1);
+  Pelleboog1Z = Pservo1Z + Larm1*sin(pos1);
 
-  Larm2s1 = sqrt(sq(Ppols1X - Pelleboog1X) + sq(Ppols1Y - Pelleboog1Y) + sq(Ppols1Z - Pelleboog1Z));
-  return (Larm2s1);
+  Larm2s1 = sqrt(sq(Ppols1X-Pelleboog1X)+sq(Ppols1Y-Pelleboog1Y)+sq(Ppols1Z-Pelleboog1Z));
+  return(Larm2s1);
 }
 
 float BerekenLengte2 (int A, int B, int C)
 {
-  Ppols2X = A - cos(graden60) * Ltop;
-  Ppols2Y = B + sin(graden60) * Ltop;
+  Ppols2X = A - cos(graden60)* Ltop;
+  Ppols2Y = B + sin(graden60)* Ltop;
   Ppols2Z = C;
 
-  Pelleboog2X = Pservo2X - cos(graden60) * Larm1 * cos(pos2);
-  Pelleboog2Y = Pservo2Y + sin(graden60) * Larm1 * cos(pos2);
-  Pelleboog2Z = Pservo2Z + Larm1 * sin(pos2);
+  Pelleboog2X = Pservo2X - cos(graden60)*Larm1*cos(pos2);
+  Pelleboog2Y = Pservo2Y + sin(graden60)*Larm1*cos(pos2);
+  Pelleboog2Z = Pservo2Z + Larm1*sin(pos2);
 
-  Larm2s2 = sqrt(sq(Ppols2X - Pelleboog2X) + sq(Ppols2Y - Pelleboog2Y) + sq(Ppols2Z - Pelleboog2Z));
-  return (Larm2s2);
+  Larm2s2 = sqrt(sq(Ppols2X-Pelleboog2X)+sq(Ppols2Y-Pelleboog2Y)+sq(Ppols2Z-Pelleboog2Z));
+  return(Larm2s2);
 }
 
 float BerekenLengte3 (int A, int B, int C)
 {
-  Ppols3X = A - cos(graden60) * Ltop;
-  Ppols3Y = B - sin(graden60) * Ltop;
+  Ppols3X = A - cos(graden60)* Ltop;
+  Ppols3Y = B - sin(graden60)* Ltop;
   Ppols3Z = C;
 
-  Pelleboog3X = Pservo3X - cos(graden60) * Larm1 * cos(pos3);
-  Pelleboog3Y = Pservo3Y - sin(graden60) * Larm1 * cos(pos3);
-  Pelleboog3Z = Pservo3Z + Larm1 * sin(pos3);
-
-  Larm2s3 = sqrt(sq(Ppols3X - Pelleboog3X) + sq(Ppols3Y - Pelleboog3Y) + sq(Ppols3Z - Pelleboog3Z));
-  return (Larm2s3);
+  Pelleboog3X = Pservo3X - cos(graden60)*Larm1*cos(pos3);
+  Pelleboog3Y = Pservo3Y - sin(graden60)*Larm1*cos(pos3);
+  Pelleboog3Z = Pservo3Z + Larm1*sin(pos3);
+  
+  Larm2s3 = sqrt(sq(Ppols3X-Pelleboog3X)+sq(Ppols3Y-Pelleboog3Y)+sq(Ppols3Z-Pelleboog3Z));
+  return(Larm2s3);
 }
 
-/*Deze functie veranderd de doelposities naar de invoer in de functie en laat de
-  servomotoren aansturen zodra er een benaderde hoek is gevonden*/
-float Hoeken (int X, int Y, int Z) {
+/*Deze functie veranderd de doelposities naar de invoer in de functie en laat de 
+servomotoren aansturen zodra er een benaderde hoek is gevonden*/
+float Hoeken (int X, int Y, int Z){
   PdoelX = X;
   PdoelY = Y;
   PdoelZ = Z;
