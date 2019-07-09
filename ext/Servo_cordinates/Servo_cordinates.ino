@@ -1,7 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <Servo.h>
+#include <math.h>
 
 //standaardposities en afmetingen delta//
 #define Pservo1X 100
@@ -26,6 +24,8 @@
 #define Ltop 40
 #define Larmmax 190
 #define Larmmin 180
+
+#define PI 3.14159265
 
 //variabelen voor berekening van gewrichtlocaties//
 float Hoek1;
@@ -62,14 +62,14 @@ float Larm2s2;
 float Larm2s3;
 
 //variabelen voor doelpositie//
-int PdoelX = 0;
-int PdoelY = 0;
-int PdoelZ = 0;
+static int16_t PdoelX = 0;
+static int16_t PdoelY = 0;
+static int16_t PdoelZ = 0;
 
 //starthoeken servos//
-float pos1 = -1.1345;
-float pos2 = -1.1345;
-float pos3 = -1.1345;
+static float pos1 = -1.1345;
+static float pos2 = -1.1345;
+static float pos3 = -1.1345;
 
 //60 graden in radialen//
 #define graden60 1.04719
@@ -83,6 +83,14 @@ Servo Servo3;
 void interface(void);
 char u_input(void);
 int value_user_input(void);
+
+float Hoeken (int X, int Y, int Z);
+float BerekenLengte3 (int A, int B, int C);
+float BerekenLengte2 (int A, int B, int C);
+float BerekenLengte1 (int A, int B, int C);
+float BerekenHoek3();
+float BerekenHoek2();
+float BerekenHoek1();
 
 int incomingByte = 0;   // for incoming serial data
 
@@ -100,9 +108,8 @@ void setup()
 
 void loop()
 {
-  Hoeken(0,70,140);
+
   delay(1);
-  
   interface();
 }
 
@@ -149,7 +156,12 @@ void interface(void)
         break;
       case 52:
         Serial.print("Setting servo's\n");
-          Hoeken(cX,cY,cZ);
+        for(int i2 = 1000; i2 != 0; i2--)
+        {
+        Hoeken(cX,cY,cZ);
+        delay(1);
+        }
+
         Serial.print("servo's set\n");
         break;
        default:
@@ -177,7 +189,6 @@ int value_user_input(void)
 
   byte inChar;
   char inString[10];
-
 
   while(1)
   {
@@ -280,6 +291,7 @@ float Hoeken (int X, int Y, int Z){
   PdoelX = X;
   PdoelY = Y;
   PdoelZ = Z;
+
   Servo1.write(BerekenHoek1());
   Servo2.write(BerekenHoek2());
   Servo3.write(BerekenHoek3());
